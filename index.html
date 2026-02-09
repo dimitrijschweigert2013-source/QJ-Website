@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QJ Joiner | Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e7eb; }
+        .glass { background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .tab-active { color: #60a5fa; border-bottom: 2px solid #3b82f6; }
+        .card { background: #111111; border: 1px solid #1f2937; transition: all 0.3s ease; }
+        .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        
+        /* Smooth Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content { animation: fadeIn 0.4s ease-out; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-4xl glass rounded-2xl shadow-xl overflow-hidden">
+        
+        <nav class="flex px-8 border-b border-white/5 bg-white/[0.02]">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="py-4 px-6 text-sm font-light tracking-wide transition-all tab-active">
+                Dashboard
+            </button>
+            <button onclick="switchTab('plans')" id="btn-plans" class="py-4 px-6 text-sm font-light tracking-wide text-gray-500 hover:text-gray-300 transition-all">
+                Store
+            </button>
+            <button onclick="switchTab('purchase')" id="btn-purchase" class="py-4 px-6 text-sm font-light tracking-wide text-gray-500 hover:text-gray-300 transition-all">
+                Top Up
+            </button>
+        </nav>
+
+        <div id="tab-dashboard" class="p-10 tab-content">
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="text-2xl font-extralight text-white">Welcome back</h2>
+                    <p class="text-gray-500 text-xs mt-1">System status: <span class="text-green-500">Online</span></p>
+                </div>
+                <div id="statusBadge" class="text-[10px] font-semibold tracking-widest text-red-500 border border-red-500/20 px-3 py-1 rounded uppercase">
+                    Inactive
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                <div class="card p-6 rounded-xl">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Balance</p>
+                    <p class="text-2xl font-light mt-1">$<span id="balanceDisplay">0.00</span></p>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Active Plan</p>
+                    <p id="activePlanDisplay" class="text-2xl font-light mt-1 text-blue-400">None</p>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Total Joins</p>
+                    <p class="text-2xl font-light mt-1">0</p>
+                </div>
+            </div>
+
+            <div class="border border-white/5 rounded-xl p-12 text-center bg-white/[0.01]">
+                <p id="dashboardMsg" class="text-gray-500 text-sm font-light italic">No active bots found. Please top up your balance to start.</p>
+            </div>
+        </div>
+
+        <div id="tab-plans" class="p-10 hidden tab-content">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-light text-white">Service Store</h2>
+                <p class="text-gray-500 text-xs mt-2">Purchase a plan using your balance</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-8 rounded-2xl flex flex-col h-full">
+                    <p class="text-blue-500 text-[10px] font-medium uppercase tracking-widest mb-4">Starter</p>
+                    <h3 class="text-xl font-light">Regular</h3>
+                    <p class="text-2xl font-extralight my-4">$3 <span class="text-xs text-gray-500">/ day</span></p>
+                    <ul class="text-xs text-gray-500 space-y-3 mb-8 flex-1">
+                        <li><i class="fa-solid fa-check mr-2 opacity-50"></i> Standard speed</li>
+                        <li><i class="fa-solid fa-check mr-2 opacity-50"></i> 1 Task</li>
+                    </ul>
+                    <button onclick="buyPlan('Regular', 3)" class="w-full py-2.5 rounded-lg border border-gray-800 hover:bg-white hover:text-black transition text-[10px] uppercase tracking-widest font-medium">Purchase</button>
+                </div>
+                <div class="card p-8 rounded-2xl border-blue-500/30 flex flex-col h-full bg-blue-500/[0.01]">
+                    <p class="text-blue-400 text-[10px] font-medium uppercase tracking-widest mb-4">Pro</p>
+                    <h3 class="text-xl font-light">VIP</h3>
+                    <p class="text-2xl font-extralight my-4">$6 <span class="text-xs text-gray-500">/ day</span></p>
+                    <ul class="text-xs text-gray-300 space-y-3 mb-8 flex-1">
+                        <li><i class="fa-solid fa-check mr-2 text-blue-500"></i> 2x Turbo speed</li>
+                        <li><i class="fa-solid fa-check mr-2 text-blue-500"></i> 5 Tasks</li>
+                        <li><i class="fa-solid fa-check mr-2 text-blue-500"></i> Priority support</li>
+                    </ul>
+                    <button onclick="buyPlan('VIP', 6)" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition text-[10px] uppercase tracking-widest font-medium">Purchase VIP</button>
+                </div>
+                <div class="card p-8 rounded-2xl flex flex-col h-full">
+                    <p class="text-purple-500 text-[10px] font-medium uppercase tracking-widest mb-4">Elite</p>
+                    <h3 class="text-xl font-light">Premium</h3>
+                    <p class="text-2xl font-extralight my-4">$10 <span class="text-xs text-gray-500">/ day</span></p>
+                    <ul class="text-xs text-gray-500 space-y-3 mb-8 flex-1">
+                        <li><i class="fa-solid fa-check mr-2 opacity-50"></i> Instant speed</li>
+                        <li><i class="fa-solid fa-check mr-2 opacity-50"></i> Unlimited tasks</li>
+                    </ul>
+                    <button onclick="buyPlan('Premium', 10)" class="w-full py-2.5 rounded-lg border border-gray-800 hover:bg-white hover:text-black transition text-[10px] uppercase tracking-widest font-medium">Purchase</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-purchase" class="p-10 hidden tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-light mb-6">Refill Account</h2>
+                    
+                    <div class="bg-white/[0.02] border border-white/5 p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[10px] text-gray-500 uppercase tracking-widest">Amount to add (USD)</span>
+                            <span class="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded uppercase">Crypto</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl text-gray-600 mr-2">$</span>
+                            <input type="number" id="usdInput" value="10" oninput="updateCalc()" class="bg-transparent text-3xl font-extralight outline-none w-full text-white">
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-blue-600 rounded-xl shadow-lg shadow-blue-900/20">
+                        <span class="text-[10px] uppercase font-bold text-blue-200 block mb-1 tracking-widest">Pay with TON</span>
+                        <div class="flex items-end gap-2 text-white">
+                            <span id="tonAmount" class="text-3xl font-extralight tracking-tight">0.0000</span>
+                            <span class="text-xs font-medium mb-1 tracking-widest">TON</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="bg-white p-2 rounded-xl mb-6 shadow-2xl">
+                        <img id="qrCode" src="" class="w-32 h-32">
+                    </div>
+                    
+                    <div class="w-full space-y-4">
+                        <div class="bg-yellow-500/[0.03] border border-yellow-500/20 p-4 rounded-xl text-center">
+                            <span class="text-[10px] uppercase font-bold text-yellow-500 block mb-2 tracking-[0.2em]">Required Memo</span>
+                            <div class="flex justify-center items-center gap-3">
+                                <code id="memoDisplay" class="text-xl font-light text-yellow-200">REFILL-XXXXX</code>
+                                <button onclick="copyMemo()" class="text-yellow-600 hover:text-yellow-400 transition"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <button onclick="sendNotify()" id="payBtn" class="w-full py-4 bg-white text-black text-[11px] font-bold rounded-xl hover:bg-gray-200 transition-all uppercase tracking-widest">
+                            Notify Admin
+                        </button>
+                        <p id="statusMsg" class="text-center text-[9px] uppercase tracking-[0.2em] mt-4"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const wallet = "UQBtQ3-1Z9HPMXHGeOgdisjdAH5NEh1nV_V_WSWRJCr7rxD-";
+        let tonPrice = 0;
+        let balance = parseFloat(localStorage.getItem('qj_balance')) || 0.00;
+
+        function updateUI() {
+            document.getElementById('balanceDisplay').innerText = balance.toFixed(2);
+            localStorage.setItem('qj_balance', balance);
+        }
+
+        async function fetchPrice() {
+            try {
+                const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd');
+                const d = await r.json();
+                tonPrice = d['the-open-network'].usd;
+                updateCalc();
+            } catch(e) { console.error("Price fetch error"); }
+        }
+
+        function switchTab(t) {
+            ['dashboard', 'plans', 'purchase'].forEach(id => {
+                document.getElementById('tab-' + id).classList.add('hidden');
+                document.getElementById('btn-' + id).classList.remove('tab-active');
+                document.getElementById('btn-' + id).classList.add('text-gray-500');
+            });
+            document.getElementById('tab-' + t).classList.remove('hidden');
+            document.getElementById('btn-' + t).classList.add('tab-active');
+            document.getElementById('btn-' + t).classList.remove('text-gray-500');
+            if(t === 'purchase') fetchPrice();
+            updateUI();
+        }
+
+        function updateCalc() {
+            const usd = document.getElementById('usdInput').value;
+            if(tonPrice > 0 && usd > 0) {
+                const amount = (usd / tonPrice).toFixed(4);
+                document.getElementById('tonAmount').innerText = amount;
+                const orderId = "REFILL-" + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('memoDisplay').innerText = orderId;
+                const link = `ton://transfer/${wallet}?amount=${Math.floor(amount * 1000000000)}&text=${orderId}`;
+                document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
+            }
+        }
+
+        function buyPlan(name, cost) {
+            if(balance >= cost) {
+                balance -= cost;
+                document.getElementById('activePlanDisplay').innerText = name;
+                document.getElementById('statusBadge').innerText = "Active";
+                document.getElementById('statusBadge').className = "text-[10px] font-semibold tracking-widest text-green-500 border border-green-500/20 px-3 py-1 rounded uppercase";
+                document.getElementById('dashboardMsg').innerText = `Your ${name} bot is currently running.`;
+                updateUI();
+                alert(`Successfully purchased ${name}!`);
+                switchTab('dashboard');
+            } else {
+                alert("Insufficient balance! Please top up first.");
+                switchTab('purchase');
+            }
+        }
+
+        async function sendNotify() {
+            const btn = document.getElementById('payBtn');
+            const status = document.getElementById('statusMsg');
+            btn.disabled = true; btn.innerText = "SENDING...";
+            
+            try {
+                await fetch('/api/notify', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        memo: document.getElementById('memoDisplay').innerText,
+                        usd: document.getElementById('usdInput').value,
+                        ton: document.getElementById('tonAmount').innerText,
+                        plan: "BALANCE_TOPUP"
+                    })
+                });
+                status.innerText = "REQUEST SENT. ADMIN WILL VERIFY.";
+                status.className = "text-center text-[9px] uppercase tracking-[0.2em] mt-4 text-blue-400";
+                btn.innerText = "REQUESTED";
+            } catch(e) {
+                status.innerText = "ERROR.";
+                btn.disabled = false;
+            }
+        }
+
+        function copyMemo() {
+            navigator.clipboard.writeText(document.getElementById('memoDisplay').innerText);
+            alert("Memo copied!");
+        }
+
+        updateUI();
+        fetchPrice();
+    </script>
+</body>
+</html>
